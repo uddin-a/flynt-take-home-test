@@ -70,7 +70,7 @@ rmup: ## Remove then start the saas containers, eg: `make rmup`
 	$(ENV) $(DKC) $(DKC_CFG) rm -s -f api-dev web-dev
 	$(MAKE) up
 	$(ENV) $(DKC) $(DKC_CFG) logs --tail 200 -f api-dev
-.PHONY: rmup	
+.PHONY: rmup
 
 # - ######### - #
 # -  PROJECT  - #
@@ -80,7 +80,7 @@ config: ## Copy '.env.dist' files to '.env' files, eg: `make config`
 	if [ ! -f .env  ]; then  cp .env.dist .env ; fi
 .PHONY: config
 
-volumes: ## Creates volumes for docker 
+volumes: ## Creates volumes for docker
 	$(DK) volume create --name web-dev-node-modules
 	$(DK) volume create --name api-dev-node-modules
 	$(DK) volume create --name db-dev-data
@@ -114,7 +114,8 @@ migration-generate: ## Create a new migration, eg: `make migration-generate name
 
 clean-db: ## Clean database data
 	$(ENV) $(DKC) $(DKC_CFG) rm -s -f db
-	$(ENV) $(DK) volume rm db-data
+	# $(ENV) $(DK) volume rm db-data
+	$(ENV) $(DK) volume rm db-dev-data
 .PHONY: clean-db
 
 # - ###### - #

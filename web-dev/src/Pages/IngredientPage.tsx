@@ -39,7 +39,7 @@ export function IngredientPage(): JSX.Element {
       </Box>
       <Box display={"flex"} gap={2}>
         {isCreationMode && <CreateIngredientForm />}
-        <IngredientTable ingredients={data} />
+        <IngredientTable ingredients={data || []} />
       </Box>
     </div>
   );

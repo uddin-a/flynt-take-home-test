@@ -1,13 +1,28 @@
-import { Box, Button, FormControl, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  createStyles,
+  FormControl,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import SpaIcon from "@mui/icons-material/Spa";
+import EggIcon from "@mui/icons-material/Egg";
+import GrainIcon from "@mui/icons-material/Grain";
+
 import { useState } from "react";
 import { CardCustom } from "../Components/CardCustom";
 import { useMutationIngredientCreate } from "../Hooks/Mutation/IngredientsMutation";
+
+export type TagType = "légumes" | "protéine" | "féculent";
 
 export function CreateIngredientForm(): JSX.Element {
   const { mutateAsync: createIngredient } = useMutationIngredientCreate();
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState<number>(0);
+  const [tag, setTag] = useState<TagType>("légumes");
 
   const resetFields = () => {
     setName("");
@@ -22,6 +37,7 @@ export function CreateIngredientForm(): JSX.Element {
     await createIngredient({
       name,
       price,
+      tag,
     });
 
     resetFields();
@@ -62,6 +78,20 @@ export function CreateIngredientForm(): JSX.Element {
               *Keep in mind that the price is for one person. Prices are
               multiplied by the number of people in the recipe.
             </span>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <Select
+              variant="outlined"
+              value={tag}
+              onChange={(event) =>
+                setTag((event.target.value as TagType) || "légumes")
+              }
+            >
+              <MenuItem value="légumes">Légumes</MenuItem>
+              <MenuItem value="protéine">Protéine</MenuItem>
+              <MenuItem value="féculent">Féculent</MenuItem>
+            </Select>
           </FormControl>
 
           <FormControl margin="normal">

@@ -14,6 +14,13 @@ import { ErrorPage } from "../Pages/ErrorPage";
 import { Ingredient } from "../Types/Ingredient";
 import { OptionsMultiSelectType } from "../Types/OptionsMultiSelect";
 
+const MAX_PROTEINE: number = 1;
+const MIN_PROTEINE: number = 0;
+const MAX_FECULANT: number = 1;
+const MIN_FECULANT: number = 1;
+const MAX_LEGUME: number = Number.POSITIVE_INFINITY;
+const MIN_LEGUME: number = 0;
+
 export function CreateRecipesForm(): JSX.Element {
   const [name, setName] = useState("");
   const [timeToCook, setTimeToCook] = useState<number>(0);
@@ -37,6 +44,43 @@ export function CreateRecipesForm(): JSX.Element {
       return;
     }
 
+    let totalProt: number = 0;
+    let totalFec: number = 0;
+    let totalLeg: number = 0;
+
+    selectedIngredients.map((val) => {
+      switch (val.tag) {
+        case "protéine":
+          totalProt++;
+          break;
+        case "féculent":
+          totalFec++;
+          break;
+        case "légumes":
+          totalLeg++;
+          break;
+        default:
+          break;
+      }
+    });
+
+    if (totalProt < MIN_PROTEINE || totalProt > MAX_PROTEINE) {
+      alert(
+        `Incorrect number of protein selected. Min : ${MIN_PROTEINE} Max : ${MAX_PROTEINE}`,
+      );
+      return;
+    } else if (totalFec < MIN_FECULANT || totalFec > MAX_FECULANT) {
+      alert(
+        `Incorrect number of féculent selected. Min : ${MIN_FECULANT} Max : ${MAX_FECULANT}`,
+      );
+      return;
+    } else if (totalLeg < MIN_LEGUME || totalLeg > MAX_LEGUME) {
+      alert(
+        `Incorrect number of légumes selected. Min : ${MIN_LEGUME} Max : ${MAX_LEGUME}`,
+      );
+      return;
+    }
+
     await createRecipe({
       name,
       timeToCook,
@@ -45,6 +89,56 @@ export function CreateRecipesForm(): JSX.Element {
     });
 
     resetFields();
+  };
+
+  /*
+    The following function serves to disable specific elements from the autocomplete field
+  */
+  const autocompleteDisabledHandler = (
+    option: OptionsMultiSelectType,
+  ): boolean => {
+    // Check if the ingrédient already exists in the list.
+    for (let i of selectedIngredients) {
+      if (i.id === option.id) {
+        return true;
+      }
+    }
+
+    let totalProt: number = 0;
+    let totalFec: number = 0;
+    let totalLeg: number = 0;
+
+    selectedIngredients.map((val) => {
+      switch (val.tag) {
+        case "protéine":
+          totalProt++;
+          break;
+        case "féculent":
+          totalFec++;
+          break;
+        case "légumes":
+          totalLeg++;
+          break;
+        default:
+          break;
+      }
+    });
+
+    /*
+      After calculating the total tag types of selected ingrédients return true or false according to
+      the set max values.
+    */
+
+    switch (option.tag) {
+      case "protéine":
+        return totalProt >= MAX_PROTEINE;
+      case "féculent":
+        return totalFec >= MAX_FECULANT;
+      case "légumes":
+        return totalLeg >= MAX_LEGUME;
+      default:
+        return false;
+    }
   };
 
   if (status === "error") {
@@ -82,12 +176,28 @@ export function CreateRecipesForm(): JSX.Element {
               value={selectedIngredients}
               multiple
               id="combo-box-demo"
-              options={ingredients.map((e: Ingredient) => {
-                return { label: e.name, id: e.id };
-              })}
+              /* We are filtering the ingredient list to not include already selected items */
+              options={
+                !ingredients
+                  ? []
+                  : ingredients
+                      .filter((ingredient) => {
+                        for (let i of selectedIngredients) {
+                          if (i.id === ingredient.id) {
+                            return false;
+                          }
+                        }
+
+                        return true;
+                      })
+                      .map((e: Ingredient) => {
+                        return { label: e.name, id: e.id, tag: e.tag };
+                      })
+              }
               renderInput={(params: any) => (
                 <TextField {...params} label="Ingredients" />
               )}
+              getOptionDisabled={autocompleteDisabledHandler}
             />
           </FormControl>
           <FormControl fullWidth margin="normal">

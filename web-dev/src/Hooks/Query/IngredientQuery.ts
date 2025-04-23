@@ -3,10 +3,13 @@ import { Ingredient } from "../../Types/Ingredient";
 import axios from "../../Utils/axios";
 import { Requests } from "../QueriesAndMutationList";
 
-export const useQueryIngredientList = (): UseQueryResult<any, unknown> => {
+export const useQueryIngredientList = (): UseQueryResult<
+  Array<Ingredient>,
+  unknown
+> => {
   return useQuery([Requests.listIngredient], async () => {
     const { data } = await axios.get<{ data: Partial<Ingredient> }>(
-      "/ingredient/list"
+      "/ingredient/list",
     );
     return data ?? [];
   });

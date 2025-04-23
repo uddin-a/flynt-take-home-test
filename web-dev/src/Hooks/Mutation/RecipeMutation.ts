@@ -32,9 +32,11 @@ export const useMutationRecipeCreate = (): UseMutationResult<
     },
     {
       onSuccess: () => {
-        clientQuery.invalidateQueries(Requests.listRecipe);
+        clientQuery.invalidateQueries<Requests.listIngredient>(
+          Requests.listRecipe,
+        );
       },
-    }
+    },
   );
 };
 
@@ -54,6 +56,6 @@ export const useMutationRecipeDelete = (): UseMutationResult<
       onSuccess: () => {
         clientQuery.invalidateQueries(Requests.listRecipe);
       },
-    }
+    },
   );
 };

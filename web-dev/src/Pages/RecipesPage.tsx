@@ -19,7 +19,6 @@ export function RecipesPage(): JSX.Element {
   };
 
   const { data, status, isLoading } = useQueryListRecipe();
-
   if (status === "error") {
     return <ErrorPage />;
   }

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Code, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+export type TagType = "légumes" | "protéine" | "féculent";
 
 @Entity()
 export class Ingredient {
@@ -10,4 +12,7 @@ export class Ingredient {
 
   @Column()
   price: number;
+
+  @Column()
+  tag: TagType;
 }

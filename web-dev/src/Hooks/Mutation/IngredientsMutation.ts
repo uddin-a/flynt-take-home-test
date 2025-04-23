@@ -1,27 +1,31 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import axios from "../../Utils/axios";
 import { Requests } from "../QueriesAndMutationList";
+import { TagType } from "../../Forms/CreateIngredientForm";
+
+interface IngredientCreateType {
+  name: string;
+  price: number;
+  tag: TagType;
+}
 
 export const useMutationIngredientCreate = (): UseMutationResult<
   any,
   unknown,
-  { name: string; price: number }
+  IngredientCreateType
 > => {
   const clientQuery = useQueryClient();
 
   return useMutation(
     [Requests.createIngredient],
-    async ({ name, price }: { name: string; price: number }) => {
-      return await axios.post(`/ingredient/create`, {
-        name,
-        price,
-      });
+    async ({ name, price, tag }: IngredientCreateType) => {
+      return await axios.post(`/ingredient/create`, { name, price, tag });
     },
     {
       onSuccess: () => {
-        clientQuery.invalidateQueries(Requests.listRecipe);
+        clientQuery.invalidateQueries(Requests.listIngredient);
       },
-    }
+    },
   );
 };
 
@@ -41,6 +45,6 @@ export const useMutationIngredientDelete = (): UseMutationResult<
       onSuccess: () => {
         clientQuery.invalidateQueries(Requests.listIngredient);
       },
-    }
+    },
   );
 };
