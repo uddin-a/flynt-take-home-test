@@ -15,3 +15,6 @@
 - Changed the DB port from 5432 to 5433 (in .env.dist and ormconfig's test environment)
 - Changed the name `db-data` to `db-dev-data` from the recipe **clean-db** in the **Makefile** because that's how the container service was named.
 - Added the 'tag' column to add the `tag` of ingridient. it was added in `api-dev`/`src`/`Entries`/`Ingredient.ts`
+
+
+> Some other changes were made in this project that was not documented.
