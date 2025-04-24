@@ -10,6 +10,9 @@
 
 
 ### API
+- We need should add more **data validation** on the `server` side.
+- Before creating / updating / deleting we should check if they exists or not. Or at least handle the errors properly or might log those kind of errors.
+
 
 #### DB
 - Changed the DB port from 5432 to 5433 (in .env.dist and ormconfig's test environment)

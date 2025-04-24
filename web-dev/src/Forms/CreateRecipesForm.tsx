@@ -13,15 +13,20 @@ import { useQueryIngredientList } from "../Hooks/Query/IngredientQuery";
 import { ErrorPage } from "../Pages/ErrorPage";
 import { Ingredient } from "../Types/Ingredient";
 import { OptionsMultiSelectType } from "../Types/OptionsMultiSelect";
+import { Recipe } from "../Types/Recipe";
 
-const MAX_PROTEINE: number = 1;
-const MIN_PROTEINE: number = 0;
-const MAX_FECULANT: number = 1;
-const MIN_FECULANT: number = 1;
-const MAX_LEGUME: number = Number.POSITIVE_INFINITY;
-const MIN_LEGUME: number = 0;
+export const MAX_PROTEINE: number = 1;
+export const MIN_PROTEINE: number = 0;
+export const MAX_FECULANT: number = 1;
+export const MIN_FECULANT: number = 1;
+export const MAX_LEGUME: number = Number.POSITIVE_INFINITY;
+export const MIN_LEGUME: number = 0;
 
-export function CreateRecipesForm(): JSX.Element {
+export function CreateRecipesForm({
+  recipes,
+}: {
+  recipes: Recipe[];
+}): JSX.Element {
   const [name, setName] = useState("");
   const [timeToCook, setTimeToCook] = useState<number>(0);
   const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
@@ -44,10 +49,34 @@ export function CreateRecipesForm(): JSX.Element {
       return;
     }
 
+    /*
+      checks if one of the ingredients already exists in an existing recipe
+    */
+    for (const si of selectedIngredients) {
+      if (
+        si.tag === "protéine" &&
+        ingredientUsedInExistingRecipes(si.id) === true
+      ) {
+        // Get the ingredient name from the ingredient list by using the ingredient id
+        let ingredientName = "";
+        for (const j of ingredients || []) {
+          if (j.id === si.id) {
+            ingredientName = j.name;
+          }
+        }
+
+        alert(
+          `The ingredient "${ingredientName}" is already used in an existing recipe.`,
+        );
+        return;
+      }
+    }
+
     let totalProt: number = 0;
     let totalFec: number = 0;
     let totalLeg: number = 0;
 
+    // Calculate total number of different type of ingredient tags.
     selectedIngredients.map((val) => {
       switch (val.tag) {
         case "protéine":
@@ -92,12 +121,38 @@ export function CreateRecipesForm(): JSX.Element {
   };
 
   /*
+    The following function checks if an engridient is already used in a different existing recipe
+  */
+  const ingredientUsedInExistingRecipes = (ingredientId: number): boolean => {
+    for (const recipe of recipes) {
+      for (const ing of recipe.ingredients) {
+        if (ingredientId === ing.id) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  /*
     The following function serves to disable specific elements from the autocomplete field
   */
   const autocompleteDisabledHandler = (
     option: OptionsMultiSelectType,
   ): boolean => {
-    // Check if the ingrédient already exists in the list.
+    /*
+      If element is proteine and already exists in a different recipe then disable it.
+    */
+
+    if (
+      option.tag === "protéine" &&
+      ingredientUsedInExistingRecipes(option.id) === true
+    ) {
+      return true;
+    }
+    /*
+      Check if the ingrédient already exists in the list.
+     */
     for (let i of selectedIngredients) {
       if (i.id === option.id) {
         return true;
@@ -182,6 +237,7 @@ export function CreateRecipesForm(): JSX.Element {
                   ? []
                   : ingredients
                       .filter((ingredient) => {
+                        // checks if already have been selected
                         for (let i of selectedIngredients) {
                           if (i.id === ingredient.id) {
                             return false;

@@ -38,8 +38,8 @@ export function RecipesPage(): JSX.Element {
         </Button>
       </Box>
       <Box display={"flex"} gap={2}>
-        {isCreationMode && <CreateRecipesForm />}
-        <RecipesTable recipes={data} />
+        {isCreationMode && <CreateRecipesForm recipes={data || []} />}
+        <RecipesTable recipes={data || []} />
       </Box>
     </div>
   );

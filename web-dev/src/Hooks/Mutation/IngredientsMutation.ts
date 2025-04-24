@@ -29,6 +29,27 @@ export const useMutationIngredientCreate = (): UseMutationResult<
   );
 };
 
+export const useMutationUpdateIngredient = (): UseMutationResult<
+  any,
+  unknown,
+  IngredientCreateType & { id: number }
+> => {
+  const clientQuery = useQueryClient();
+
+  return useMutation(
+    [Requests.updateIngredient],
+    async ({ id, name, price, tag }: IngredientCreateType & { id: number }) => {
+      console.log("Updating ingredient:", { id, name, price, tag });
+      return await axios.put(`/ingredient/update/`, { id, name, price, tag });
+    },
+    {
+      onSuccess: () => {
+        clientQuery.invalidateQueries(Requests.listIngredient);
+      },
+    },
+  );
+};
+
 export const useMutationIngredientDelete = (): UseMutationResult<
   any,
   unknown,
