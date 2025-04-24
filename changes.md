@@ -7,6 +7,8 @@
 - Added the `tag` type in the `Ingridient` **type** (`web-dev`/`src`/`Types`/`Ingridient.tsx`)
 - I modified some data type from `any` to some specific data type for better type checking.
 - in the **CreateRecipesForm.ts** i have added the limits (disabled) of ingridient depending on how much is selected (the max values has been set in that file). I have changed the list in a way that selected Ingredient are removed from the list to not create any duplicates.
+- Added some visual components to add the `Tag` and `Tag modification`
+- Added some visual component for indicating changes done to the tag in recipe page.
 
 
 ### API
